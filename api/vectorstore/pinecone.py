@@ -24,6 +24,13 @@ class PineconeVectorStore:
     def vector_store(self):
         return self._vector_store
 
+    @property
+    def retriever(self):
+        if self.vector_store:
+            return self.vector_store.as_retriever()
+        else:
+            raise ValueError("No vector store provided")
+
     def create_embeddings(
         self,
         data: list[dict]
@@ -57,7 +64,7 @@ class PineconeVectorStore:
         # Upsert to pinecone
         self._vector_store.add_documents(documents=docs)
 
-    def retrieve(self, query: str):
+    def fetch(self, query: str):
         results = self._vector_store.similarity_search_with_score(
             query, k=3
         )

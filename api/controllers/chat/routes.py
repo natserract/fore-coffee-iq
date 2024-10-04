@@ -1,12 +1,11 @@
 import datetime
+from agent import Agent
 from uuid import UUID, uuid4
 from fastapi import APIRouter, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 from controllers.chat.dto import ChatQuestion, GetChatHistoryOutput
 from typing import no_type_check
-from controllers.chat.service import ChatService
-from agent import Agent
 
 chat_router = APIRouter()
 
@@ -16,7 +15,6 @@ async def create_chat_handler(
     chat_question: ChatQuestion,
 ):
     agent = Agent()
-    chat_service = ChatService(agent=agent)
 
     message_metadata = {
         "chat_id": uuid4(),
@@ -29,13 +27,12 @@ async def create_chat_handler(
     }
 
     @no_type_check
-    async def generator():
+    async def generate_answer_stream(
+        question: str
+    ):
         full_answer = ""
 
-        async for response in chat_service.ask_streaming(
-            question=chat_question.question
-        ):
-            # Format output to be correct servicedf;j
+        async for response in agent.ask_streaming(question):
             if not response.last_chunk:
                 streamed_chat_history = GetChatHistoryOutput(
                     assistant=response.answer,
@@ -53,5 +50,7 @@ async def create_chat_handler(
         )
         yield f"data: {streamed_chat_history.model_dump_json()}"
 
-    response_messages = generator()
-    return StreamingResponse(response_messages, media_type="application/x-ndjson")
+    return StreamingResponse(
+        generate_answer_stream(question=chat_question.question),
+        media_type="application/x-ndjson"
+    )
