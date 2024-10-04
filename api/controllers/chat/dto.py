@@ -1,8 +1,20 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from uuid import UUID
 
 from pydantic import BaseModel
+
+class ChatMessage(BaseModel):
+    model: str
+    question: str
+    message_id: UUID
+    history: List[Tuple[str, str]]
+    temperature: float = 0.0
+    max_tokens: int = 256
+    chat_id: Optional[UUID] = None
+    chat_name: Optional[str] = None
+    message_time: datetime
+
 
 class ChatQuestion(BaseModel):
     question: str

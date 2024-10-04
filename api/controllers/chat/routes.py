@@ -1,5 +1,5 @@
 import datetime
-from agent import Agent
+from agent.agent_executor import Agent
 from uuid import UUID, uuid4
 from fastapi import APIRouter, Request
 from fastapi.encoders import jsonable_encoder

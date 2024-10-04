@@ -46,8 +46,6 @@ export const useHandleStream = () => {
         try {
           const parsedData = JSON.parse(data);
           updateStreamingHistory(parsedData);
-
-          console.log("parsedData", parsedData);
         } catch (e) {
           console.error("Error parsing data string", e);
         }

@@ -6,14 +6,17 @@ import { useChatContext } from "~/lib/context/ChatProvider/hooks/useChatContext"
 import { generatePlaceHolderMessage } from "~/utils/generatePlaceHolderMessage";
 
 const Chat = () => {
-  const [prompt, setPrompt] = useState("");
+  const [query, setQuery] = useState("");
+  const [chatHistories, setChatHistories] = useState<
+    { human: string; ai: string }[]
+  >([]);
   const [generating, setGenerating] = useState(false);
 
   const { handleStream } = useHandleStream();
   const { messages, removeMessage, updateStreamingHistory } = useChatContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrompt(e.target.value);
+    setQuery(e.target.value);
   };
 
   const handleFetchError = async (response: Response) => {
@@ -29,9 +32,9 @@ const Chat = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const query = prompt.trim();
-    if (query.length === 0) {
-      alert("prompt cannot be empty");
+    const question = query.trim();
+    if (question.length === 0) {
+      alert("Question cannot be empty");
       return;
     }
 
@@ -41,15 +44,16 @@ const Chat = () => {
     };
 
     const placeHolderMessage = generatePlaceHolderMessage({
-      user_message: query,
+      user_message: question,
       chat_id: "1",
     });
     updateStreamingHistory(placeHolderMessage);
 
     const body = JSON.stringify({
-      question: query,
+      question: question,
     });
 
+    setQuery("");
     setGenerating(true);
     try {
       const response = await fetch("/api/chat", {
@@ -80,43 +84,21 @@ const Chat = () => {
   return (
     <div
       className={
-        "px-4 md:px-0 max-w-3xl mx-auto mt-20 flex flex-col justify-center items-center"
+        "px-4 md:px-0 max-w-3xl mx-auto flex flex-col justify-center items-center"
       }
     >
-      <form
-        onSubmit={handleSubmit}
-        className={"w-[80%] space-y-2 flex flex-col mr-auto"}
-      >
-        <label htmlFor={"prompt"}>Enter a prompt</label>
-        <input
-          id={"prompt"}
-          name={"prompt"}
-          type={"text"}
-          onChange={handleChange}
-          className={"border border-purple-500 py-2 px-4 rounded-md"}
-          placeholder={"Type here..."}
-        />
-        <div className={"text-right"}>
-          <button
-            disabled={generating}
-            type={"submit"}
-            className={
-              "px-2 py-1 bg-blue-400 rounded-md text-white disabled:bg-blue-300 hover:bg-blue-500 disabled:cursor-not-allowed"
-            }
-          >
-            Submit
-          </button>
-        </div>
-      </form>
       <div
         className={
-          "h-48 mt-4 w-full p-4 border border-purple-500 rounded-md overflow-auto"
+          "h-[80vh] mt-4 w-full p-4 border border-slate-300 rounded-md overflow-auto"
         }
       >
         {messages.length > 0 ? (
           messages.map((content, idx) => {
             return (
-              <div key={`assistant-${content.message_id}`}>
+              <div
+                className="mb-5 bg-slate-200 p-5"
+                key={`assistant-${content.message_id}`}
+              >
                 {content.assistant}
               </div>
             );
@@ -127,6 +109,27 @@ const Chat = () => {
           </h2>
         )}
       </div>
+
+      <form onSubmit={handleSubmit} className={"mt-5 space-y-2 w-full"}>
+        <div className="relative">
+          <input
+            id={"query"}
+            name={"query"}
+            type={"text"}
+            onChange={handleChange}
+            value={query}
+            className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none"
+            placeholder={"Enter a question"}
+          />
+          <button
+            disabled={generating}
+            type={"submit"}
+            className="absolute right-0 top-0 bottom-0 bg-black hover:bg-zinc-900 text-white rounded-md px-4 py-2 disabled:cursor-not-allowed disabled:bg-zinc-900"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
