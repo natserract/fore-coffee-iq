@@ -16,6 +16,10 @@ export function ChatProvider({
 }): JSX.Element {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
+  const initChats = (chat: ChatMessage): void => {
+    setMessages(() => [chat]);
+  };
+
   const updateStreamingHistory = (streamedChat: ChatMessage): void => {
     setMessages((prevHistory: ChatMessage[]) => {
       const updatedHistory = prevHistory.find(
@@ -46,6 +50,7 @@ export function ChatProvider({
     <ChatContext.Provider
       value={{
         messages,
+        initChats,
         setMessages,
         removeMessage,
         updateStreamingHistory,

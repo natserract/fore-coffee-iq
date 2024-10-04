@@ -3,15 +3,18 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from middlewares.cors import add_cors_middleware
 from controllers.chat.routes import chat_router
-from dataset.data import data
 from vectorstore.pinecone import PineconeVectorStore
+
+# load datasets
+from dataset.dataset import load_datasets
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 # Create document embeddings
+datasets = load_datasets()
 vector_store = PineconeVectorStore()
-vector_store.create_embeddings(data)
+vector_store.create_embeddings(datasets)
 
 app = FastAPI()
 add_cors_middleware(app)

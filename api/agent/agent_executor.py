@@ -1,7 +1,8 @@
 import os
 from uuid import uuid4, UUID
 from langchain_openai import ChatOpenAI
-from langchain.chains import RetrievalQA, create_retrieval_chain
+from langchain.chains import RetrievalQA
+from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -23,7 +24,7 @@ today_date = datetime.now().strftime("%B %d, %Y")
 class Agent:
     def __init__(self) -> None:
         self.llm = ChatOpenAI(
-            model='gpt-4o-mini',
+            model='gpt-4o',
             temperature=0.0
         )
         self.vector_store = PineconeVectorStore()
@@ -47,11 +48,12 @@ class Agent:
         )
 
         system_prompt = f"""
-        Your name is ForeCoffeIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
+        Your name is ForeCoffeeIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
 
         Use the following pieces of retrieved context to answer the question.
         If you don't know the answer with the context provided, say that you don't know, just say that you don't know, don't try to make up an answer.
         Use three sentences maximum and keep the answer concise.
+        Always respond in the same language as the user's question.
         """
         system_prompt += "\n\n {context}"
 

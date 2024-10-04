@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useHandleStream } from "~/hooks/useHandleStream";
 import { withChatContext } from "~/lib/context/ChatProvider/ChatProvider";
 import { useChatContext } from "~/lib/context/ChatProvider/hooks/useChatContext";
@@ -10,7 +11,8 @@ const Chat = () => {
   const [generating, setGenerating] = useState(false);
 
   const { handleStream } = useHandleStream();
-  const { messages, removeMessage, updateStreamingHistory } = useChatContext();
+  const { messages, initChats, removeMessage, updateStreamingHistory } =
+    useChatContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -44,6 +46,7 @@ const Chat = () => {
       user_message: question,
       assistant: question,
       chat_id: new Date().getTime().toString(),
+      message_type: "human",
     });
     updateStreamingHistory(questionMessage);
 
@@ -77,6 +80,21 @@ const Chat = () => {
     }
   };
 
+  // Greetings
+  useEffect(() => {
+    // In development mode, will show two times
+    updateStreamingHistory({
+      message_id: new Date().getTime().toString(),
+      message_time: new Date(
+        new Date().setDate(new Date().getDate() + 1),
+      ).toISOString(),
+      user_message: "welcome",
+      assistant: "Hi Fore Friends! Selamat datang di Fore Coffee! 😘",
+      chat_id: new Date().getTime().toString(),
+      message_type: "ai",
+    });
+  }, []);
+
   return (
     <div
       className={
@@ -85,20 +103,29 @@ const Chat = () => {
     >
       <div
         className={
-          "pt-5 relative w-full h-[90vh] overflow-auto transition-width"
+          "pt-10 relative w-full h-[90vh] overflow-auto transition-width"
         }
       >
         {messages.length > 0 ? (
           messages.map((content, idx) => {
-            const isEven = idx % 2 == 0;
+            const isHuman = content.message_type == "human";
 
             return (
               <div
-                className={`mb-3 p-3 flex items-center ${isEven ? "justify-end" : "justify-start"}`}
+                className={`mb-3 flex items-start ${isHuman ? "justify-end text-right" : "justify-start text-left"} gap-x-5`}
                 key={`assistant-${content.message_id}`}
               >
-                {!isEven ? <span className="p-5">🧠</span> : null}{" "}
-                <p>{content.assistant}</p>
+                {!isHuman ? (
+                  <div className="w-[40px]">
+                    <Image
+                      src="/logo-single.png"
+                      width={40}
+                      height={40}
+                      alt="Fore Coffee"
+                    />
+                  </div>
+                ) : null}{" "}
+                <p className="w-[95%] pt-2">{content.assistant}</p>
               </div>
             );
           })
@@ -109,8 +136,16 @@ const Chat = () => {
         )}
 
         {generating && (
-          <div className="mb-3 p-3">
-            <span className="p-5 text-gray-400">🧠</span> ...
+          <div className={`mb-3 flex items-start justify-start gap-x-5`}>
+            <div className="w-[40px]">
+              <Image
+                src="/logo-single.png"
+                width={40}
+                height={40}
+                alt="Fore Coffee"
+              />
+            </div>
+            <span className="w-[95%] pt-2">...</span>
           </div>
         )}
       </div>
@@ -125,7 +160,8 @@ const Chat = () => {
               onChange={handleChange}
               value={query}
               className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none"
-              placeholder={"Hi! Fore Friends. Ada yang bisa kami bantu?"}
+              placeholder={"Ada yang bisa kami bantu?"}
+              autoComplete="off"
             />
             <button
               disabled={generating || !query.length}

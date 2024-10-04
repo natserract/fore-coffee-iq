@@ -4,6 +4,8 @@ export type ChatConfig = {
   maxTokens: number;
 };
 
+export type MessageFrom = "human" | "ai";
+
 export type ChatMessage = {
   chat_id: string;
   message_id: string;
@@ -11,12 +13,13 @@ export type ChatMessage = {
   assistant: string;
   message_time: string;
   metadata?: Record<string, any>;
-  type?: string;
+  message_type: MessageFrom;
 };
 
 export type ChatContextProps = {
   messages: ChatMessage[];
   setMessages: (history: ChatMessage[]) => void;
   updateStreamingHistory: (streamedChat: ChatMessage) => void;
+  initChats: (chat: ChatMessage) => void;
   removeMessage: (id: string) => void;
 };

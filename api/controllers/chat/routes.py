@@ -37,6 +37,7 @@ async def create_chat_handler(
                 streamed_chat_history = GetChatHistoryOutput(
                     assistant=response.answer,
                     metadata=response.metadata.model_dump(),
+                    message_type='ai',
                     **message_metadata,
                 )
 
@@ -46,6 +47,7 @@ async def create_chat_handler(
         streamed_chat_history = GetChatHistoryOutput(
             assistant=response.answer,
             metadata=response.metadata.model_dump(),
+            message_type='ai',
             **message_metadata,
         )
         yield f"data: {streamed_chat_history.model_dump_json()}"

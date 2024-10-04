@@ -44,9 +44,8 @@ class PineconeVectorStore:
                 is_exist = True
                 break;
 
+        # self.index.delete(delete_all=True) # reset
         if is_exist == False:
-            logger.info(f'Create new data')
-            # self.index.delete(delete_all=True) # if you want to reset all existing data
             self.save_embeddings(data)
 
     def save_embeddings(
@@ -55,16 +54,18 @@ class PineconeVectorStore:
     ):
         docs: list[Document] = []
         for item in tqdm(data, desc="Create document embeddings"):
-            content = item["context"] + " " + item["question"]
-            if item["answers"]["text"]:
-                content += " " + " ".join(item["answers"]["text"])
+            content = ""
+            if item["question"]["texts"]:
+                content += " " + "Question: " + " ".join(item["question"]["texts"])
+            if item["answer"]["texts"]:
+                content += " " + "| Answer: " + " ".join(item["answer"]["texts"])
             doc = Document(page_content=content, metadata={
                 "intent": item["intent"],
             })
             docs.append(doc)
 
         text_splitter = CharacterTextSplitter(
-            separator="\n", chunk_size=1000, chunk_overlap=0, length_function=len
+            separator="\n", chunk_size=20, chunk_overlap=10, length_function=len
         )
 
         # Split the text documents into nodes.
@@ -81,6 +82,7 @@ class PineconeVectorStore:
                 doc_id = str(uuid.uuid4())
                 document_node.metadata["doc_id"] = doc_id
                 page_content = document_node.page_content
+
                 if page_content.startswith(".") or page_content.startswith("。"):
                     page_content = page_content[1:].strip()
                 else:
@@ -91,8 +93,9 @@ class PineconeVectorStore:
 
             all_documents.extend(split_documents)
 
-            # Upsert to pinecone
-            self._vector_store.add_documents(documents=all_documents)
+        # Upsert to pinecone
+        for document in tqdm(all_documents, desc="Add documents in the vector store"):
+            self._vector_store.add_documents(documents=[document])
 
     def fetch(self, query: str):
         results = self._vector_store.similarity_search_with_score(

@@ -24,6 +24,7 @@ class GetChatHistoryOutput(BaseModel):
     message_id: UUID
     user_message: str
     message_time: datetime
+    message_type: str
     assistant: str | None = None
     prompt_title: str | None = None
     brain_name: str | None = None

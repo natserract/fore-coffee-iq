@@ -1,17 +1,17 @@
-import { ChatMessage } from "~/lib/context/ChatProvider/types";
+import { ChatMessage, MessageFrom } from "~/lib/context/ChatProvider/types";
 
 type GeneratePlaceHolderMessageProps = {
   user_message: string;
   assistant: string;
   chat_id: string;
-  type?: string;
+  message_type: MessageFrom;
 };
 
 export const generatePlaceHolderMessage = ({
   user_message,
   chat_id,
   assistant,
-  type,
+  message_type,
 }: GeneratePlaceHolderMessageProps): ChatMessage => {
   return {
     message_id: new Date().getTime().toString(),
@@ -21,6 +21,6 @@ export const generatePlaceHolderMessage = ({
     chat_id,
     assistant,
     user_message,
-    type,
+    message_type,
   };
 };
