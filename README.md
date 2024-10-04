@@ -2,7 +2,7 @@
 
 The retrieval-augmented generation (RAG) enables retrieval of relevant information from an external knowledge source and allows large language models (LLMs) to answer queries over previously unseen document collections.
 
-[![alt text](screenshot.png)](https://www.youtube.com/watch?v=_uxRNYtBgpI)
+[![Demo](screenshot.png)](https://www.youtube.com/watch?v=_uxRNYtBgpI)
 
 ## Setup
 
