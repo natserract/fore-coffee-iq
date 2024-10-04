@@ -1,52 +1,47 @@
 data = [
     {
-        "id": 1,
-        "context": "Apple is being referred to as a type of fruit.",
-        "question": "What is Apple known for as a fruit?",
+        "intent": 'brand/product_information',
+        "context": "Fore Coffee didirikan dengan filosofi untuk menyediakan tempat bagi orang-orang untuk beristirahat sejenak dan menikmati secangkir kopi berkualitas tinggi di tengah kesibukan. Nama 'Fore' memiliki dua arti: 'Grind' sebagai usaha keras yang dilakukan setiap hari, dan 'Grind' sebagai langkah penting dalam proses pembuatan kopi. Ini menginspirasi orang untuk menyadari hal-hal penting dalam kehidupan. Fore Coffee telah berkembang pesat sejak didirikan pada tahun 2018, dengan saat ini memiliki lebih dari 120 toko di 28 kota di seluruh Indonesia. Fore Coffee juga telah meluncurkan beberapa produk baru seperti FOREveryone 1L dan Fore Deli untuk kategori makanan.",
+        "question": "Apa itu fore coffee?",
         "answers": {
             "text": [
-                "Apple is a popular fruit known for its sweetness and crisp texture."
+                "Fore Coffee adalah startup retail kopi lokal terkemuka di Indonesia.",
             ],
         }
     },
     {
-        "id": 2,
-        "context": "Apple is being referred to as a technology company, recognized for products like the iPhone.",
-        "question": "What is Apple known for as a company?",
+        "intent": 'brand/product_information',
+        "context": "Pada tahun 2018, Fore Coffee meluncurkan toko pertamanya di Jakarta dan juga meluncurkan aplikasi Fore Coffee. Pada tahun 2018, Fore Coffee meluncurkan toko pertamanya di Jakarta dan juga meluncurkan aplikasi Fore Coffee. Pada tahun 2019, Fore Coffee mulai membuka toko di luar wilayah Jabodetabek, yaitu di Surabaya dan Medan. Sejak didirikan pada tahun 2018, Fore Coffee terus mengembangkan bisnisnya dengan membuka cabang-cabang baru di berbagai kota di Indonesia. Pada tahun 2022, Fore Coffee telah memiliki lebih dari 120 toko di 28 kota di seluruh Indonesia.",
+        "question": "Pada tahun berapa fore coffee didirikan?",
         "answers": {
             "text": [
-                "The tech company Apple is known for its innovative products like the iPhone."
+                "Fore Coffee didirikan pada tahun 2018 sebagai sebuah startup kopi yang berfokus pada penyediaan kopi berkualitas tinggi untuk pelanggan.",
             ],
         }
     },
     {
-        "id": 3,
-        "context": "Apple is referred to as a healthy fruit snack that people enjoy.",
-        "question": "Why do people eat apples?",
+        "intent": 'brand/product_information',
+        "context": "Pencapaian/goals fore coffee",
+        "question": "Apa saja pencapaian Fore Coffee sejak didirikan?",
         "answers": {
             "text": [
-                "Many people enjoy eating apples as a healthy snack."
+                "Sejak didirikan pada tahun 2018, Fore Coffee telah mencapai beberapa milestone penting, antara lain:",
+                "- Meluncurkan aplikasi Fore Coffee dan membuka toko pertama di Jakarta pada tahun 2018.",
+                "- Membuka toko di luar Jabodetabek, seperti Surabaya dan Medan, pada tahun 2019.",
+                "- Meluncurkan produk baru FOREveryone 1L dan mencapai 1,8 juta pengguna aplikasi pada tahun 2020",
+                "- Menyeduh kopi ke-10 juta, meluncurkan Fore Deli, dan membuka toko utama pertama di Yogyakarta pada tahun 2021",
+                "- Menjangkau lebih dari 120 toko di 28 kota di seluruh Indonesia pada tahun 2022."
             ],
         }
     },
     {
-        "id": 4,
-        "context": "Apple Inc. is referred to in the context of its impact on the technology sector, particularly its designs and user interfaces.",
-        "question": "How has Apple Inc. influenced the tech industry?",
+        "intent": 'brand/product_information',
+        "context": "Fore Coffee menjual berbagai produk dan layanan, antara lain: 1. Kopi Spesial - Fore Coffee menyediakan kopi berkualitas tinggi yang diproses dan dipanggang dengan sempurna. Mereka menggunakan biji kopi pilihan yang didapatkan langsung dari petani. 2. Makanan dan Minuman - Selain kopi, Fore Coffee juga menjual berbagai makanan dan minuman lainnya, seperti yang terlihat di menu mereka. Mereka memiliki kategori 'Fore Deli' untuk menjual produk makanan. 3. Layanan Catering Kopi - Fore Coffee menawarkan layanan catering kopi untuk berbagai acara dan kegiatan. 4. Aplikasi Fore Coffee - Fore Coffee memiliki aplikasi mobile yang memungkinkan pelanggan untuk memesan kopi dan produk lainnya secara cepat dan mudah. Aplikasi ini telah mencapai 1,8 juta pengguna. 5. Produk Kemasan - Fore Coffee juga menjual produk kopi kemasan, seperti FOREveryone 1L, yang dapat dibeli oleh pelanggan.",
+        "question": "Fore Coffee menjual produk apa?",
         "answers": {
             "text": [
-                "Apple Inc. has revolutionized the tech industry with its sleek designs and user-friendly interfaces."
+                "Fore Coffee menyediakan kopi berkualitas tinggi yang diproses dan dipanggang dengan sempurna. Mereka menggunakan biji kopi pilihan yang didapatkan langsung dari petani."
             ],
         }
     },
-    {
-        "id": 5,
-        "context": "The text refers to the well-known saying about apples promoting health.",
-        "question": "What is the common saying about eating apples?",
-        "answers": {
-            "text": [
-                "An apple a day keeps the doctor away, as the saying goes."
-            ],
-        }
-    }
 ]

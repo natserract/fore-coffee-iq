@@ -47,7 +47,7 @@ class Agent:
         )
 
         system_prompt = f"""
-        Your name is NatserractIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
+        Your name is ForeCoffeIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
 
         Use the following pieces of retrieved context to answer the question.
         If you don't know the answer with the context provided, say that you don't know, just say that you don't know, don't try to make up an answer.

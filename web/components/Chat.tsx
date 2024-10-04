@@ -7,9 +7,6 @@ import { generatePlaceHolderMessage } from "~/utils/generatePlaceHolderMessage";
 
 const Chat = () => {
   const [query, setQuery] = useState("");
-  const [chatHistories, setChatHistories] = useState<
-    { human: string; ai: string | null }[]
-  >([]);
   const [generating, setGenerating] = useState(false);
 
   const { handleStream } = useHandleStream();
@@ -37,17 +34,6 @@ const Chat = () => {
       alert("Question cannot be empty");
       return;
     }
-
-    let messageIdx = chatHistories.length;
-    setChatHistories((state) => {
-      return [
-        ...state,
-        {
-          human: question,
-          ai: null,
-        },
-      ];
-    });
 
     const headers = {
       "Content-Type": "application/json",
@@ -139,14 +125,14 @@ const Chat = () => {
               onChange={handleChange}
               value={query}
               className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none"
-              placeholder={"Enter a question"}
+              placeholder={"Hi! Fore Friends. Ada yang bisa kami bantu?"}
             />
             <button
               disabled={generating || !query.length}
               type={"submit"}
               className="absolute right-0 top-0 bottom-0 bg-black hover:bg-zinc-900 text-white rounded-md px-4 py-2 disabled:cursor-not-allowed disabled:bg-zinc-300"
             >
-              Ask
+              Chat
             </button>
           </div>
         </form>

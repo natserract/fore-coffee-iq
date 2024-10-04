@@ -1,8 +1,8 @@
-# Simple Retrieval-Augmented Generation (RAG) Chatbot
+# Retrieval-Augmented Generation (RAG) Chatbot
 
 The retrieval-augmented generation (RAG) enables retrieval of relevant information from an external knowledge source and allows large language models (LLMs) to answer queries over previously unseen document collections.
 
-## Setups
+## Setup
 
 ```bash
 cp .env.example .env
