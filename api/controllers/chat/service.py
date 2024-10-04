@@ -46,12 +46,11 @@ class ChatService:
         )
         yield last_chunk
 
-    @no_type_check
     async def ask_streaming(self, question: str) -> AsyncGenerator[ParsedRAGChunkResponse, ParsedRAGChunkResponse]:
         full_answer = ""
         async for response in self.answer_astream(question):
             if not response.last_chunk:
                 yield response
-            full_answer += response.answer
-
-        yield response
+            else:
+                full_answer += response.answer
+                yield response

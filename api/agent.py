@@ -8,7 +8,7 @@ from vectorstore.pinecone import PineconeVectorStore
 
 class Agent:
     def __init__(self) -> None:
-        self.llm = llm = ChatOpenAI(
+        self.llm = ChatOpenAI(
             model='gpt-4o-mini',
             temperature=0.0
         )
