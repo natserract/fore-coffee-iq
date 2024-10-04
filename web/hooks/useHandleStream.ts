@@ -5,7 +5,7 @@ export const useHandleStream = () => {
 
   const handleStream = async (
     reader: ReadableStreamDefaultReader<Uint8Array>,
-    onFirstChunk: () => void,
+    onFirstChunk?: () => void,
   ): Promise<void> => {
     const decoder = new TextDecoder("utf-8");
     let isFirstChunk = true;
@@ -28,7 +28,9 @@ export const useHandleStream = () => {
 
       if (isFirstChunk) {
         isFirstChunk = false;
-        onFirstChunk();
+        if (onFirstChunk) {
+          onFirstChunk();
+        }
       }
 
       // Concatenate incomplete data with new chunk

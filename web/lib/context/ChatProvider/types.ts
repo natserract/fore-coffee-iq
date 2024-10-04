@@ -11,6 +11,7 @@ export type ChatMessage = {
   assistant: string;
   message_time: string;
   metadata?: Record<string, any>;
+  type?: string;
 };
 
 export type ChatContextProps = {

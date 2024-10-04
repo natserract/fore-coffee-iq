@@ -8,7 +8,7 @@ import { generatePlaceHolderMessage } from "~/utils/generatePlaceHolderMessage";
 const Chat = () => {
   const [query, setQuery] = useState("");
   const [chatHistories, setChatHistories] = useState<
-    { human: string; ai: string }[]
+    { human: string; ai: string | null }[]
   >([]);
   const [generating, setGenerating] = useState(false);
 
@@ -38,16 +38,28 @@ const Chat = () => {
       return;
     }
 
+    let messageIdx = chatHistories.length;
+    setChatHistories((state) => {
+      return [
+        ...state,
+        {
+          human: question,
+          ai: null,
+        },
+      ];
+    });
+
     const headers = {
       "Content-Type": "application/json",
       Accept: "text/event-stream",
     };
 
-    const placeHolderMessage = generatePlaceHolderMessage({
+    const questionMessage = generatePlaceHolderMessage({
       user_message: question,
-      chat_id: "1",
+      assistant: question,
+      chat_id: new Date().getTime().toString(),
     });
-    updateStreamingHistory(placeHolderMessage);
+    updateStreamingHistory(questionMessage);
 
     const body = JSON.stringify({
       question: question,
@@ -70,9 +82,7 @@ const Chat = () => {
         throw new Error("Response Body Null");
       }
 
-      await handleStream(response.body.getReader(), () =>
-        removeMessage(placeHolderMessage.message_id),
-      );
+      await handleStream(response.body.getReader());
     } catch (error) {
       //@ts-ignore
       alert(`error: ${error.message}`);
@@ -89,17 +99,20 @@ const Chat = () => {
     >
       <div
         className={
-          "h-[80vh] mt-4 w-full p-4 border border-slate-300 rounded-md overflow-auto"
+          "pt-5 relative w-full h-[90vh] overflow-auto transition-width"
         }
       >
         {messages.length > 0 ? (
           messages.map((content, idx) => {
+            const isEven = idx % 2 == 0;
+
             return (
               <div
-                className="mb-5 bg-slate-200 p-5"
+                className={`mb-3 p-3 flex items-center ${isEven ? "justify-end" : "justify-start"}`}
                 key={`assistant-${content.message_id}`}
               >
-                {content.assistant}
+                {!isEven ? <span className="p-5">🧠</span> : null}{" "}
+                <p>{content.assistant}</p>
               </div>
             );
           })
@@ -108,28 +121,36 @@ const Chat = () => {
             No Response
           </h2>
         )}
+
+        {generating && (
+          <div className="mb-3 p-3">
+            <span className="p-5 text-gray-400">🧠</span> ...
+          </div>
+        )}
       </div>
 
-      <form onSubmit={handleSubmit} className={"mt-5 space-y-2 w-full"}>
-        <div className="relative">
-          <input
-            id={"query"}
-            name={"query"}
-            type={"text"}
-            onChange={handleChange}
-            value={query}
-            className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none"
-            placeholder={"Enter a question"}
-          />
-          <button
-            disabled={generating}
-            type={"submit"}
-            className="absolute right-0 top-0 bottom-0 bg-black hover:bg-zinc-900 text-white rounded-md px-4 py-2 disabled:cursor-not-allowed disabled:bg-zinc-900"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
+      <div className="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full">
+        <form onSubmit={handleSubmit} className={"mt-5 space-y-2 w-full"}>
+          <div className="relative">
+            <input
+              id={"query"}
+              name={"query"}
+              type={"text"}
+              onChange={handleChange}
+              value={query}
+              className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none"
+              placeholder={"Enter a question"}
+            />
+            <button
+              disabled={generating || !query.length}
+              type={"submit"}
+              className="absolute right-0 top-0 bottom-0 bg-black hover:bg-zinc-900 text-white rounded-md px-4 py-2 disabled:cursor-not-allowed disabled:bg-zinc-300"
+            >
+              Ask
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
