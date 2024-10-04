@@ -1,10 +1,9 @@
-"use client";
-
 import { createContext, useState } from "react";
 import {
   ChatContextProps,
   ChatMessage,
 } from "~/lib/context/ChatProvider/types";
+import { useChatContext } from "~/lib/context/ChatProvider/hooks/useChatContext";
 
 export const ChatContext = createContext<ChatContextProps | undefined>(
   undefined,
@@ -56,3 +55,15 @@ export function ChatProvider({
     </ChatContext.Provider>
   );
 }
+
+export const withChatContext = <P extends object>(
+  Component: React.ComponentType<P>,
+) => {
+  return (props: P) => {
+    return (
+      <ChatProvider>
+        <Component {...props} />
+      </ChatProvider>
+    );
+  };
+};
