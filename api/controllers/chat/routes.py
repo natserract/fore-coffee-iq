@@ -6,6 +6,7 @@ from fastapi.responses import StreamingResponse
 from controllers.chat.dto import ChatQuestion, GetChatHistoryOutput
 from typing import no_type_check
 from controllers.chat.service import ChatService
+from agent import Agent
 
 chat_router = APIRouter()
 
@@ -14,7 +15,8 @@ async def create_chat_handler(
     request: Request,
     chat_question: ChatQuestion,
 ):
-    chat_service = ChatService()
+    agent = Agent()
+    chat_service = ChatService(agent=agent)
 
     message_metadata = {
         "chat_id": uuid4(),

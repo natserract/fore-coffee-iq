@@ -1,10 +1,14 @@
-from agent import agent
+from agent import Agent
+from langchain_core.runnables import Runnable
 from langchain_core.messages.ai import AIMessageChunk
-from typing import AsyncGenerator, Dict, no_type_check
+from typing import AsyncGenerator, Callable, Dict, no_type_check
 from controllers.chat.models import ParsedRAGChunkResponse, RAGResponseMetadata
 from controllers.chat.utils import parse_chunk_response, get_chunk_metadata
 
 class ChatService:
+    def __init__(self, agent: Agent) -> None:
+        self._agent = agent;
+
     async def answer_astream(
         self,
         question: str,
@@ -15,7 +19,7 @@ class ChatService:
         chunk_id = 0
         prev_answer = ""
 
-        chain = agent(question)
+        chain = self._agent.run(question)
         async for chunk in chain.astream({"input": question }, config={"metadata": metadata},):
             if "docs" in chunk:
                 sources = chunk["docs"] if "docs" in chunk else []

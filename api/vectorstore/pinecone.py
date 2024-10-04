@@ -20,6 +20,10 @@ class PineconeVectorStore:
         )
         self._vector_store = lp.PineconeVectorStore(index=self.index, embedding=self.embeddings)
 
+    @property
+    def vector_store(self):
+        return self._vector_store
+
     def create_embeddings(
         self,
         data: list[dict]
@@ -52,3 +56,11 @@ class PineconeVectorStore:
 
         # Upsert to pinecone
         self._vector_store.add_documents(documents=docs)
+
+    def retrieve(self, query: str):
+        results = self._vector_store.similarity_search_with_score(
+            query, k=3
+        )
+        for res, score in results:
+            print(f"* [SIM={score:3f}] {res.page_content} [{res.metadata}]")
+        return results
