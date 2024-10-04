@@ -4,6 +4,9 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+class ChatQuestion(BaseModel):
+    question: str
+
 class GetChatHistoryOutput(BaseModel):
     chat_id: UUID
     message_id: UUID

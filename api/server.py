@@ -1,3 +1,4 @@
+"""
 import os
 import json
 import datetime
@@ -17,7 +18,6 @@ from models import ParsedRAGChunkResponse, RAGResponseMetadata
 
 load_dotenv(verbose=True, override=True)
 
-app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -77,7 +77,7 @@ async def ask_streaming(question: str) -> AsyncGenerator[ParsedRAGChunkResponse,
 
     yield response
 
-@app.post("/chat")
+#@app.post("/chat")
 async def ask(req: Chat):
     question = req.question
     #chain = agent(question)
@@ -120,3 +120,5 @@ async def ask(req: Chat):
 
     response_messages = generator()
     return StreamingResponse(response_messages, media_type="application/x-ndjson")
+
+"""
