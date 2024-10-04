@@ -1,6 +1,8 @@
-# Retrieval-Augmented Generation (RAG) Chatbot
+# Fore Coffee Retrieval-Augmented Generation (RAG) Chatbot
 
 The retrieval-augmented generation (RAG) enables retrieval of relevant information from an external knowledge source and allows large language models (LLMs) to answer queries over previously unseen document collections.
+
+[![alt text](screenshot.png)](demo.mp4)
 
 ## Setup
 
