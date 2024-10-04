@@ -14,8 +14,11 @@ from controllers.chat.utils import parse_chunk_response, get_chunk_metadata
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from datetime import datetime
 
 chat_history = {}
+
+today_date = datetime.now().strftime("%B %d, %Y")
 
 class Agent:
     def __init__(self) -> None:
@@ -43,15 +46,14 @@ class Agent:
             self.llm, retriever, contextualize_q_prompt
         )
 
-        system_prompt = (
-            "You are an assistant for question-answering tasks. "
-            "Use the following pieces of retrieved context to answer "
-            "the question. If you don't know the answer, say that you "
-            "don't know. Use three sentences maximum and keep the "
-            "answer concise."
-            "\n\n"
-            "{context}"
-        )
+        system_prompt = f"""
+        Your name is NatserractIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
+
+        Use the following pieces of retrieved context to answer the question.
+        If you don't know the answer with the context provided, say that you don't know, just say that you don't know, don't try to make up an answer.
+        Use three sentences maximum and keep the answer concise.
+        """
+        system_prompt += "\n\n {context}"
 
         prompt = ChatPromptTemplate.from_messages(
             [
