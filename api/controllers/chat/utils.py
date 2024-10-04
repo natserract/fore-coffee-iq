@@ -1,6 +1,6 @@
 from langchain_core.messages.ai import AIMessageChunk
 from typing import Any, Tuple, no_type_check
-from models import RAGResponseMetadata
+from controllers.chat.models import RAGResponseMetadata
 
 def cited_answer_filter(tool):
     return tool["name"] == "cited_answer"
