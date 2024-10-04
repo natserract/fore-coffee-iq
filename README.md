@@ -16,6 +16,19 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
+Database setup:
+
+1. Create a new API key in the [Pinecone](https://www.pinecone.io/) console, or use the connect widget below to generate a key.
+2. Copy your generated key:
+```bash
+PINECONE_API_KEY="YOUR_API_KEY"
+```
+3. Create an index on console
+4. Copy your index host:
+```bash
+PINECONE_INDEX_HOST="YOUR_INDEX_HOST'
+```
+
 To install dependencies:
 
 ```bash
