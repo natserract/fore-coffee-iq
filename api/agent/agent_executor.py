@@ -20,7 +20,10 @@ from controllers.chat.utils import parse_chunk_response, get_chunk_metadata
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from prompt.system_prompt import system_prompt_template as main_prompt_template
+from prompt.system_prompt import (
+    system_prompt_template as main_prompt_template,
+    contextualize_q_system_prompt_template
+)
 from utils.prompt_template_parser import PromptTemplateParser
 
 chat_history = {}
@@ -54,13 +57,9 @@ class Agent:
             ]
         )
 
-        contextualize_q_system_prompt = """Given a chat history and the latest user question \
-        which might reference context in the chat history, formulate a standalone question \
-        which can be understood without the chat history. Do NOT answer the question, \
-        just reformulate it if needed and otherwise return it as is."""
         contextualize_q_prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", contextualize_q_system_prompt),
+                ("system", contextualize_q_system_prompt_template),
                 MessagesPlaceholder("chat_history"),
                 ("human", "{input}"),
             ]
