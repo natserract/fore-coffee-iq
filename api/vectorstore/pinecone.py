@@ -8,6 +8,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents import Document
 from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from utils.clean_processor import CleanProcessor
+from typing import List, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -97,10 +98,8 @@ class PineconeVectorStore:
         for document in tqdm(all_documents, desc="Add documents in the vector store"):
             self._vector_store.add_documents(documents=[document])
 
-    def fetch(self, query: str):
-        results = self._vector_store.similarity_search_with_score(
+    def filter_documents(self, query: str) -> List[Document]:
+        results = self._vector_store.similarity_search(
             query, k=3
         )
-        for res, score in results:
-            print(f"* [SIM={score:3f}] {res.page_content} [{res.metadata}]")
         return results

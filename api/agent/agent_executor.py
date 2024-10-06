@@ -1,5 +1,7 @@
 import os
 from uuid import uuid4, UUID
+from langchain_core.documents import Document
+from langchain_core.retrievers import BaseRetriever
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.chains.retrieval import create_retrieval_chain
@@ -9,6 +11,8 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from vectorstore.pinecone import PineconeVectorStore
 from langchain_core.runnables import Runnable
 from langchain_core.messages import AIMessageChunk, AIMessage, HumanMessage
+from langchain.retrievers import MergerRetriever
+from langchain_community.retrievers import BM25Retriever
 from typing import AsyncGenerator, Callable, Dict, no_type_check, Any
 from controllers.chat.models import ParsedRAGChunkResponse, RAGResponseMetadata
 from controllers.chat.utils import parse_chunk_response, get_chunk_metadata
@@ -16,6 +20,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from datetime import datetime
+from prompt.system_prompt import system_prompt as main_prompt
 
 chat_history = {}
 
@@ -29,8 +34,26 @@ class Agent:
         )
         self.vector_store = PineconeVectorStore()
 
-    def create_chain(self):
-        retriever = self.vector_store.retriever;
+    def create_chain(self, query: str):
+        documents = self.vector_store.filter_documents(query)
+        retriever = self.create_retriever(documents)
+
+        system_prompt = f"""
+        Your name is ForeCoffeeIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
+
+        Use the following pieces of retrieved context to answer the question.
+        If you don't know the answer with the context provided, say that you don't know, just say that you don't know, don't try to make up an answer.
+        Use three sentences maximum and keep the answer concise.
+        Always respond in the same language as the user's question.
+        """
+        system_prompt += "\n\n {context}"
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt),
+                MessagesPlaceholder("chat_history"),
+                ("human", "{input}"),
+            ]
+        )
 
         contextualize_q_system_prompt = """Given a chat history and the latest user question \
         which might reference context in the chat history, formulate a standalone question \
@@ -47,24 +70,6 @@ class Agent:
             self.llm, retriever, contextualize_q_prompt
         )
 
-        system_prompt = f"""
-        Your name is ForeCoffeeIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
-
-        Use the following pieces of retrieved context to answer the question.
-        If you don't know the answer with the context provided, say that you don't know, just say that you don't know, don't try to make up an answer.
-        Use three sentences maximum and keep the answer concise.
-        Always respond in the same language as the user's question.
-        """
-        system_prompt += "\n\n {context}"
-
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", system_prompt),
-                MessagesPlaceholder("chat_history"),
-                ("human", "{input}"),
-            ]
-        )
-
         question_answer_chain = create_stuff_documents_chain(self.llm, prompt)
         rag_chain = create_retrieval_chain(
             history_aware_retriever,
@@ -79,6 +84,18 @@ class Agent:
             output_messages_key="answer",
         )
         return conversational_rag_chain
+
+    def create_retriever(
+        self, documents: list[Document]
+    ) -> MergerRetriever:
+        vector_store_retriever = self.vector_store.retriever
+
+        retrievers = [
+            vector_store_retriever,
+            BM25Retriever.from_documents(documents),
+        ]
+
+        return MergerRetriever(retrievers=retrievers)
 
     @no_type_check
     async def ask_streaming(
@@ -104,7 +121,7 @@ class Agent:
         chunk_id = 0
         prev_answer = ""
 
-        chain = self.create_chain()
+        chain = self.create_chain(query=question)
         async for chunk in chain.astream(
             {"input": question },
             config={
