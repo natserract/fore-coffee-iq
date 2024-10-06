@@ -1,7 +1,10 @@
 import os
 from uuid import uuid4, UUID
+from datetime import datetime
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
+from langchain.retrievers import MergerRetriever
+from langchain_community.retrievers import BM25Retriever
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.chains.retrieval import create_retrieval_chain
@@ -11,16 +14,14 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from vectorstore.pinecone import PineconeVectorStore
 from langchain_core.runnables import Runnable
 from langchain_core.messages import AIMessageChunk, AIMessage, HumanMessage
-from langchain.retrievers import MergerRetriever
-from langchain_community.retrievers import BM25Retriever
 from typing import AsyncGenerator, Callable, Dict, no_type_check, Any
 from controllers.chat.models import ParsedRAGChunkResponse, RAGResponseMetadata
 from controllers.chat.utils import parse_chunk_response, get_chunk_metadata
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from datetime import datetime
-from prompt.system_prompt import system_prompt as main_prompt
+from prompt.system_prompt import system_prompt_template as main_prompt_template
+from utils.prompt_template_parser import PromptTemplateParser
 
 chat_history = {}
 
@@ -38,15 +39,13 @@ class Agent:
         documents = self.vector_store.filter_documents(query)
         retriever = self.create_retriever(documents)
 
-        system_prompt = f"""
-        Your name is ForeCoffeeIQ. You are an assistant for question-answering tasks. Today's date is {today_date}.
-
-        Use the following pieces of retrieved context to answer the question.
-        If you don't know the answer with the context provided, say that you don't know, just say that you don't know, don't try to make up an answer.
-        Use three sentences maximum and keep the answer concise.
-        Always respond in the same language as the user's question.
-        """
-        system_prompt += "\n\n {context}"
+        system_prompt_template = PromptTemplateParser(
+            template=main_prompt_template
+        )
+        system_prompt = system_prompt_template.format({
+            "today_date": today_date,
+            "question": query,
+        })
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt),
@@ -83,6 +82,7 @@ class Agent:
             history_messages_key="chat_history",
             output_messages_key="answer",
         )
+
         return conversational_rag_chain
 
     def create_retriever(
