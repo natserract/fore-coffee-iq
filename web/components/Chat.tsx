@@ -9,6 +9,7 @@ import { generatePlaceHolderMessage } from "~/utils/generatePlaceHolderMessage";
 const Chat = () => {
   const [query, setQuery] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [processTime, setProcessTime] = useState<string | null>(null);
 
   const { handleStream } = useHandleStream();
   const { messages, initChats, removeMessage, updateStreamingHistory } =
@@ -56,12 +57,16 @@ const Chat = () => {
 
     setQuery("");
     setGenerating(true);
+    setProcessTime(null);
     try {
+      const startTime = performance.now();
       const response = await fetch("/api/chat", {
         headers,
         method: "POST",
         body,
       });
+      console.debug("response", response);
+
       if (!response.ok) {
         void handleFetchError(response);
         return;
@@ -72,6 +77,11 @@ const Chat = () => {
       }
 
       await handleStream(response.body.getReader());
+
+      // Show total time
+      const endTime = performance.now();
+      const processTimeInSeconds = (endTime - startTime) / 1000;
+      setProcessTime(processTimeInSeconds.toFixed(2));
     } catch (error) {
       //@ts-ignore
       alert(`error: ${error.message}`);
@@ -103,7 +113,7 @@ const Chat = () => {
     >
       <div
         className={
-          "pt-10 relative w-full h-[90vh] overflow-auto transition-width"
+          "pt-10 relative w-full h-[86vh] overflow-auto transition-width"
         }
       >
         {messages.length > 0 ? (
@@ -152,6 +162,12 @@ const Chat = () => {
 
       <div className="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full">
         <form onSubmit={handleSubmit} className={"mt-5 space-y-2 w-full"}>
+          {processTime && !generating && (
+            <time className="text-xs text-gray-400">
+              Total time: {processTime}s
+            </time>
+          )}
+
           <div className="relative">
             <input
               id={"query"}
@@ -159,7 +175,7 @@ const Chat = () => {
               type={"text"}
               onChange={handleChange}
               value={query}
-              className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none"
+              className="border border-gray-300 rounded-lg pl-4 pr-20 py-2 w-full focus:outline-none placeholder:text-gray-500"
               placeholder={"Ada yang bisa kami bantu?"}
               autoComplete="off"
             />
@@ -172,6 +188,9 @@ const Chat = () => {
             </button>
           </div>
         </form>
+        <p className="mt-4 text-sm text-gray-500 text-center">
+          ForeCoffeeIQ can make mistakes. Check important info.
+        </p>
       </div>
     </div>
   );
