@@ -9,12 +9,10 @@ The retrieval-augmented generation (RAG) enables retrieval of relevant informati
 ```bash
 cp .env.example .env
 
-# Managing environments
-pyenv install 3.11
-pyenv local 3.11  # Activate Python 3.11 for the current project
+# Sync package
+rye sync
 
 # Activate environment
-python3 -m venv .venv
 source .venv/bin/activate
 ```
 
@@ -29,12 +27,6 @@ PINECONE_API_KEY="YOUR_API_KEY"
 4. Copy your index host:
 ```bash
 PINECONE_INDEX_HOST="YOUR_INDEX_HOST'
-```
-
-**To install dependencies**:
-
-```bash
-make install
 ```
 
 ## Running

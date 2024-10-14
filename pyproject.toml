@@ -1,15 +1,28 @@
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-name = "simple-chatbot"
+[project]
+name = "fore-coffee-iq"
 version = "0.1.0"
-description = ""
-authors = ["Natserract <natserract@gmail.com>"]
+description = "Add your description here"
+authors = [{ name = "natserract", email = "benjaminstwo@gmail.com" }]
+dependencies = [
+    "fastapi==0.115.0",
+    "langchain==0.3.1",
+    "langchain-community==0.3.1",
+    "langchain-openai==0.2.1",
+    "langchain-pinecone==0.2.0",
+    "openai==1.51.0",
+    "pinecone==5.0.0",
+    "python-dotenv==1.0.1",
+    "rank-bm25==0.2.2",
+    "tiktoken==0.7.0",
+    "uvicorn==0.31.0",
+]
+readme = "README.md"
+requires-python = ">= 3.11"
 
-[tool.poetry.dependencies]
-python = "^3.11"
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = ["fastapi[standard]==0.115.0"]
 
 [tool.pyright]
 venvPath = "."
